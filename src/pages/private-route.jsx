@@ -15,7 +15,7 @@ export function PrivateRouteUser() {
     const [state] = useContext(UserContext);
 
     if (state.user.role === "admin") {
-        return <Navigate to="/homeadmin" />
+        return <Navigate to="/listproduct" />
     }
     return <Outlet />
 }

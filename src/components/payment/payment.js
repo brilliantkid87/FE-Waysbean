@@ -3,61 +3,80 @@ import { Container, Row, Col, Image, Button, Card } from 'react-bootstrap';
 import rwanda from '../assets/VirungaEspresso.jpg'
 import plus from '../assets/+.png'
 import minus from '../assets/-.png'
+import { useQuery } from 'react-query';
+import { API } from '../../config/api';
 
 function PaymentComponent() {
-    const [items, setItems] = useState([
-        { id: 1, name: 'Barang 1', price: 10, quantity: 1, image: rwanda },
-        { id: 2, name: 'Barang 2', price: 20, quantity: 2, image: rwanda },
-        { id: 3, name: 'Barang 3', price: 15, quantity: 1, image: rwanda },
-        { id: 4, name: 'Barang 3', price: 15, quantity: 1, image: rwanda },
-        { id: 5, name: 'Barang 3', price: 15, quantity: 1, image: rwanda },
-        { id: 6, name: 'Barang 3', price: 15, quantity: 1, image: rwanda },
-        { id: 7, name: 'Barang 3', price: 15, quantity: 1, image: rwanda },
-    ]);
 
-    const incrementQuantity = (id) => {
-        setItems((prevItems) =>
-            prevItems.map((item) =>
-                item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-            )
-        );
-    };
+    const [ cart, setCart ] = useState()
 
-    const decrementQuantity = (id) => {
-        setItems((prevItems) =>
-            prevItems.map((item) =>
-                item.id === id && item.quantity > 1
-                    ? { ...item, quantity: item.quantity - 1 }
-                    : item
-            )
-        );
-    };
+    let {data: carts} = useQuery("cartCache", async () => {
+        const response = await API.get("/carts")
+
+        setCart(response.data.data) 
+        return response.data.data
+    }) 
+
+    console.log(cart);
+
+    // const incrementQuantity = (id) => {
+    //     setCart((prevItems) =>
+    //         prevItems.map((item) =>
+    //             item.id === id ? { ...item, quantity: item.products.stock + 1 } : item
+    //         )
+    //     );
+    // };
+
+    // const decrementQuantity = (id) => {
+    //     setCart((prevItems) =>
+    //         prevItems.map((item) =>
+    //             item.id === id && item.products.stock > 1
+    //                 ? { ...item, quantity: item.products.stock - 1 }
+    //                 : item
+    //         )
+    //     );
+    // };
+    const incrementCart = (id, orderQuantity, product_id) => {
+        setCart({
+            id: id,
+            product_id: product_id,
+            order_quantity: orderQuantity + 1,
+        })
+    }
+
+    const decrementCart = (id, orderQuantity, product_id) => {
+        setCart({
+            id: id,
+            product_id: product_id,
+            order_quantity: orderQuantity - 1,
+        })
+    }
 
     const removeItem = (id) => {
-        setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+        setCart((prevItems) => prevItems.filter((item) => item.id !== id));
     };
 
-    const subtotal = items.reduce((total, item) => total + item.price * item.quantity, 0);
+    const subtotal = ((total, item) => total + item.products.price * item.products.stock, 0);
     const total = subtotal;
-    const totalQuantity = items.reduce((total, item) => total + item.quantity, 0);
+    const totalQuantity = ((total, item) => total + item.products.stock, 0);
 
     const renderItems = () => {
-        return items.map((item, index) => (
+        return carts?.map((item, index) => (
             <Row key={item.id} className="align-items-center my-2">
                 <Col xs={2}>
-                    <Image src={item.image} alt={item.name} thumbnail fluid />
+                    <Image src={item?.products?.image} alt={item.name} thumbnail fluid />
                 </Col>
                 <Col xs={4}>
-                    <h6>{item.name}</h6>
-                    <Image src={minus} style={{ marginRight: "10px", cursor: "pointer", transition: "ease 0.3s" }} onClick={() => decrementQuantity(item.id)} />
+                    <h6>{item?.products?.name}</h6>
+                    <Image src={minus} style={{ marginRight: "10px", cursor: "pointer", transition: "ease 0.3s" }} onClick={incrementCart} />
                     <span style={{ display: 'inline-block', minWidth: '30px', textAlign: 'center' }}>
-                        {item.quantity}
+                        {item?.products?.stock}
                     </span>
-                    <Image src={plus} style={{ marginLeft: "10px", cursor: "pointer", transition: "ease 0.3s" }} onClick={() => incrementQuantity(item.id)} />
+                    <Image src={plus} style={{ marginLeft: "10px", cursor: "pointer", transition: "ease 0.3s" }} onClick={decrementCart} />
                 </Col>
                 <Col xs={1}>
-                    <p>${item.price}</p>
-                    <Button variant="danger" size="sm" onClick={() => removeItem(item.id)}>
+                    <p>${item?.products?.price}</p>
+                    <Button variant="danger" size="sm" onClick={() => removeItem(item?.products?.id)}>
                         <i className="fas fa-trash-alt" />
                     </Button>
                 </Col>

@@ -32,7 +32,6 @@ const reducer = (state, action) => {
       }   
 };
 
-export const userContext = createContext()
 
 export const UserContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)

@@ -1,13 +1,15 @@
 import { Card, Col, Container, Image, Row } from "react-bootstrap";
 import myProfile from '../assets/Elon-Musk-2022.webp'
 import rwanda from '../assets/VirungaEspresso.jpg'
+import { useContext, useEffect } from "react";
+import { UserContext } from "../../context/userContext";
 
 function ProfileComponent() {
+    const [state] = useContext(UserContext)
 
     return (
 
         <>
-
             <Container style={{ marginTop: "100px", justifyContent: "center" }}>
                 <Row>
                     <Col xs={6}>
@@ -24,9 +26,9 @@ function ProfileComponent() {
                     </Col>
                     <Col xs={3}>
                         <h6 style={{ fontFamily: "avenir", fontStyle:"normal", fontWeight: "bold" }}>Full Name</h6>
-                        <p style={{ fontFamily: "avenir", fontStyle:"normal" }}>Radif Ganteng</p>
+                        <p style={{ fontFamily: "avenir", fontStyle:"normal" }}>{state?.user.name}</p>
                         <h6 style={{ fontFamily: "avenir", fontStyle:"normal", fontWeight: "bold" }}>Email</h6>
-                        <p style={{ fontFamily: "avenir", fontStyle:"normal" }}>RadifGanteng@mail.com</p>
+                        <p style={{ fontFamily: "avenir", fontStyle:"normal" }}>{state?.user.email}</p>
                     </Col>
 
                     {/* <Col xs={6} style={{ background: "#F6E6DA" }}> */}
