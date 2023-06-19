@@ -20,7 +20,7 @@ function ListProductComponent() {
                     <Table striped bordered hover>
                         <thead>
                             <tr style={{ fontFamily: "avenir", fontStyle: "normal", fontWeight: "bold" }}>
-                                <th>#</th>
+                                <th>No</th>
                                 <th>Image</th>
                                 <th>Name</th>
                                 <th>Stock</th>

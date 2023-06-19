@@ -67,7 +67,7 @@ function RegisterComp(props) {
     return (
         <Modal show={showModal} onHide={handleCloseModal}>
             <div className="position-relative">
-                <img
+                {/* <img
                     className="position-absolute top-0 start-0"
                     //   src={palm}
                     alt="Left Flower"
@@ -76,13 +76,14 @@ function RegisterComp(props) {
                     className="position-absolute top-0 end-0"
                     //   src={hibiscius}
                     alt="Right Flower"
-                />
+                /> */}
                 <h3 className="mx-auto my-3 text-center">Register</h3>
             </div>
-            <Form className="mt-5" onSubmit={(e) => handleSubmit.mutate(e)}>
+            <Form className="mt-2" onSubmit={(e) => handleSubmit.mutate(e)}>
                 <FormGroup controlId="" className="p-2">
                     <Form.Label>Full Name</Form.Label>
                     <Form.Control
+                        style={{ background: "rgba(97, 61, 43, 0.25)"}}
                         type="text"
                         placeholder="Enter Full Name"
                         // value={fullName}
@@ -93,6 +94,7 @@ function RegisterComp(props) {
                 <FormGroup controlId="formBasicEmail" className="p-2">
                     <Form.Label>Email Address</Form.Label>
                     <Form.Control
+                        style={{ background: "rgba(97, 61, 43, 0.25)"}}
                         type="email"
                         placeholder="Enter email"
                         // value={email}
@@ -104,6 +106,7 @@ function RegisterComp(props) {
                 <Form.Group className="mb-3 p-2" controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
+                        style={{ background: "rgba(97, 61, 43, 0.25)"}}
                         type="password"
                         placeholder="Password"
                         // value={password}
@@ -113,7 +116,7 @@ function RegisterComp(props) {
                 </Form.Group>
                 <div className="d-flex justify-content-center">
 
-                    <Button className="m-2 rounded" variant="primary" type="submit">
+                    <Button className="m-2 rounded w-100" style={{background: "#613D2B"}} type="submit">
                         Register
                     </Button>
                 </div>

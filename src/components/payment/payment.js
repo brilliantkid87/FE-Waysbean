@@ -1,112 +1,225 @@
-import React, { useState } from 'react'
-import { Container, Row, Col, Image, Button, Card } from 'react-bootstrap';
-import rwanda from '../assets/VirungaEspresso.jpg'
-import plus from '../assets/+.png'
-import minus from '../assets/-.png'
-import { useQuery } from 'react-query';
+import React, { useContext, useEffect, useState } from 'react';
+import { Container, Row, Col, Image, Button, Card, Toast } from 'react-bootstrap';
+import minus from '../assets/-.png';
+import plus from '../assets/+.png';
+import { useMutation, useQuery } from 'react-query';
 import { API } from '../../config/api';
+import { UserContext } from '../../context/userContext';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function PaymentComponent() {
+    let navigate = useNavigate();
+    const [state] = useContext(UserContext);
+    const [cart, setCart] = useState([]);
 
-    const [ cart, setCart ] = useState()
 
-    let {data: carts} = useQuery("cartCache", async () => {
-        const response = await API.get("/carts")
+    let { data: carts } = useQuery("cartCache", async () => {
+        const response = await API.get("/cart-user/" + state?.user?.id);
+        setCart(response.data.data);
+        return response.data.data;
+    });
 
-        setCart(response.data.data) 
-        return response.data.data
-    }) 
+   // State untuk menyimpan data keranjang belanja
 
-    console.log(cart);
+    // Fungsi untuk menangani penambahan jumlah pesanan
+    const handleIncrement = (itemId) => {
+        const updatedCarts = carts.map((item) => {
+            if (item.id === itemId) {
+                return {
+                    ...item,
+                    order_quantity: item.order_quantity + 1,
+                };
+            }
+            return item;
+        });
 
-    // const incrementQuantity = (id) => {
-    //     setCart((prevItems) =>
-    //         prevItems.map((item) =>
-    //             item.id === id ? { ...item, quantity: item.products.stock + 1 } : item
-    //         )
-    //     );
-    // };
-
-    // const decrementQuantity = (id) => {
-    //     setCart((prevItems) =>
-    //         prevItems.map((item) =>
-    //             item.id === id && item.products.stock > 1
-    //                 ? { ...item, quantity: item.products.stock - 1 }
-    //                 : item
-    //         )
-    //     );
-    // };
-    const incrementCart = (id, orderQuantity, product_id) => {
-        setCart({
-            id: id,
-            product_id: product_id,
-            order_quantity: orderQuantity + 1,
-        })
-    }
-
-    const decrementCart = (id, orderQuantity, product_id) => {
-        setCart({
-            id: id,
-            product_id: product_id,
-            order_quantity: orderQuantity - 1,
-        })
-    }
-
-    const removeItem = (id) => {
-        setCart((prevItems) => prevItems.filter((item) => item.id !== id));
+        setCart(updatedCarts);
     };
 
-    const subtotal = ((total, item) => total + item.products.price * item.products.stock, 0);
-    const total = subtotal;
-    const totalQuantity = ((total, item) => total + item.products.stock, 0);
+    // Fungsi untuk menangani pengurangan jumlah pesanan
+    const handleDecrement = (itemId) => {
+        const updatedCarts = carts.map((item) => {
+            if (item.id === itemId && item.order_quantity > 1) {
+                return {
+                    ...item,
+                    order_quantity: item.order_quantity - 1,
+                };
+            }
+            return item;
+        });
+
+        setCart(updatedCarts);
+    };
+
+
+    let pricetotal = cart?.products?.price * cart?.products?.Quantity
+    console.log(carts?.products?.price);
+    console.log(carts?.products?.Quantity);
+
+    const removeItem = (productId) => {
+        const updatedCarts = carts.filter((item) => item.products.id !== productId);
+        setCart(updatedCarts);
+      };
+      
+
+    const [form, setForm] = useState({
+        user_id: '',
+        name: '',
+        email: '',
+        phone: '',
+        postcode: '',
+        address: '',
+        status: '',
+        pricetotal: '',
+    });
+
+    const handlePay = useMutation(async (e) => {
+        try {
+            e.preventDefault();
+
+            const config = {
+                headers: {
+                    'Content-type': 'multipart/form-data',
+                    'Authorization': `Bearer ${localStorage.token}`,
+                },
+            };
+
+            const formData = new FormData();
+            formData.set('user_id', form.user_id);
+            formData.set('name', form.name);
+            formData.set('email', form.email);
+            formData.set('phone', form.phone);
+            formData.set('postcode', form.postcode);
+            formData.set('address', form.address);
+            formData.set('status', form.status);
+            formData.set("total_qty", 1000)
+
+            const response = await API.post('/transaction', carts, config);
+            console.log('Yoman : add transaction success : ', response);
+
+            const token = response.data.data.token;
+            window.snap.pay(token, {
+                onSuccess: function (result) {
+                    /* You may add your own implementation here */
+                    console.log(result);
+                    navigate("/profile");
+                },
+                onPending: function (result) {
+                    /* You may add your own implementation here */
+                    console.log(result);
+                    navigate("/profile");
+                },
+                onError: function (result) {
+                    /* You may add your own implementation here */
+                    console.log(result);
+                    navigate("/profile");
+                },
+                onClose: function () {
+                    /* You may add your own implementation here */
+                    alert("you closed the popup without finishing the payment");
+                },
+            });
+
+            // navigate('/profile');
+        } catch (error) {
+            console.log('Yoman : add product failed : ', error);
+        }
+    });
+
+    useEffect(() => {
+        //change this to the script source you want to load, for example this is snap.js sandbox env
+        const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+        //change this according to your client-key
+        const myMidtransClientKey = process.env.REACT_APP_MIDTRANS_CLIENT_KEY;
+
+        let scriptTag = document.createElement("script");
+        scriptTag.src = midtransScriptUrl;
+        // optional if you want to set script attribute
+        // for example snap.js have data-client-key attribute
+        scriptTag.setAttribute("data-client-key", myMidtransClientKey);
+
+        document.body.appendChild(scriptTag);
+        return () => {
+            document.body.removeChild(scriptTag);
+        };
+    }, []);
+
+    var Quantity = cart?.length
+    for (let i = 0; i < cart?.length; i++) {
+        console.log(cart[i]?.sub_total, cart[i + 1]?.sub_total);
+    }
 
     const renderItems = () => {
-        return carts?.map((item, index) => (
-            <Row key={item.id} className="align-items-center my-2">
-                <Col xs={2}>
-                    <Image src={item?.products?.image} alt={item.name} thumbnail fluid />
-                </Col>
-                <Col xs={4}>
-                    <h6>{item?.products?.name}</h6>
-                    <Image src={minus} style={{ marginRight: "10px", cursor: "pointer", transition: "ease 0.3s" }} onClick={incrementCart} />
-                    <span style={{ display: 'inline-block', minWidth: '30px', textAlign: 'center' }}>
-                        {item?.products?.stock}
-                    </span>
-                    <Image src={plus} style={{ marginLeft: "10px", cursor: "pointer", transition: "ease 0.3s" }} onClick={decrementCart} />
-                </Col>
-                <Col xs={1}>
-                    <p>${item?.products?.price}</p>
-                    <Button variant="danger" size="sm" onClick={() => removeItem(item?.products?.id)}>
-                        <i className="fas fa-trash-alt" />
-                    </Button>
-                </Col>
-                {index === 0 && (
-                    <Col xs={5} className="mt-3">
-                        <Card>
-                            <Card.Body>
-                                <Card.Text>Subtotal: ${subtotal}</Card.Text>
-                                <Card.Text>Quantity: {totalQuantity}</Card.Text>
-                                <Card.Text>Total: ${total}</Card.Text>
-                                <Button style={{ background: "#613D2B", width: "100%" }} >
-                                    Pay
-                                </Button>
-                            </Card.Body>
-                        </Card>
+        let subtotal = 0;
+        let totalQuantity = 0;
+
+        console.log(carts?.length);
+
+        carts?.forEach((item, index) => {
+            const itemSubtotal = item.products.price * item.order_quantity;
+            subtotal += itemSubtotal;
+            totalQuantity += item.order_quantity;
+        });
+        const subtotalFormatted = `Subtotal: Rp. ${subtotal.toLocaleString()}`;
+
+        return carts?.map((item, index) => {
+
+            return (
+                <Row key={item.id} className="align-items-center my-2">
+                    <Col xs={2}>
+                        <Image src={item?.products?.image} alt={item.name} thumbnail fluid />
                     </Col>
-                )}
-            </Row>
-        ));
+                    <Col xs={4}>
+                        <h6>{item?.products?.name}</h6>
+                        <Image
+                            src={minus}
+                            style={{ marginRight: '10px', cursor: 'pointer', transition: 'ease 0.3s' }}
+                            onClick={() => handleDecrement(item.id)}
+                        />
+                        <span style={{ display: 'inline-block', minWidth: '30px', textAlign: 'center' }}>
+                            {item.order_quantity}
+                        </span>
+                        <Image
+                            src={plus}
+                            style={{ marginLeft: '10px', cursor: 'pointer', transition: 'ease 0.3s' }}
+                            onClick={() => handleIncrement(item.id)}
+                        />
+                    </Col>
+                    <Col xs={1}>
+                        <p>Rp. {(item?.products?.price).toLocaleString()}</p>
+                        <Button variant="danger" size="sm" onClick={() => removeItem(item.products.id)}>
+                            <i className="fas fa-trash-alt" />
+                        </Button>
+                    </Col>
+                    {index === 0 && (
+                        <Col xs={5} className="mt-3">
+                            <Card>
+                                <Card.Body>
+                                    <Card.Text> {subtotalFormatted} </Card.Text>
+                                    <Card.Text>Total Quantity: {totalQuantity}</Card.Text>
+                                    <Button style={{ background: '#613D2B', width: '100%' }} onClick={(e) => handlePay.mutate(e)}>Pay</Button>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    )}
+                </Row>
+            );
+        });
     };
 
     return (
         <>
-            <Container style={{ justifyContent: "center" }}>
-                <h3 style={{ marginTop: "100px", fontFamily: "avenir", fontStyle: "normal", color: "#613D2B", fontWeight: "bold"}}>My Cart</h3>
-                <p style={{ fontFamily: "avenir", fontStyle: "normal", color: "#613D2B"}}>Review Your Order</p>
+            <Container style={{ justifyContent: 'center' }}>
+                <h3 style={{ marginTop: '100px', fontFamily: 'avenir', fontStyle: 'normal', color: '#613D2B', fontWeight: 'bold' }}>
+                    My Cart
+                </h3>
+                <p style={{ fontFamily: 'avenir', fontStyle: 'normal', color: '#613D2B' }}>Review Your Order</p>
                 {renderItems()}
             </Container>
         </>
     );
 }
 
-export default PaymentComponent
+export default PaymentComponent;
+
+

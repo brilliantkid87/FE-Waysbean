@@ -63,27 +63,27 @@ function App() {
   return (
     <>
       {isLoading ? null :
-      <Routes>
-        <Route path="/" element={<Home />} />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/detailproduct/:id" element={<Detail />} />
 
-        <Route element={<PrivateRouteLogin />} >
-          <Route element={<PrivateRouteUser />} >
-            <Route path="/detailproduct/:id" element={<Detail />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/profile" element={<Profile />} />
+          <Route element={<PrivateRouteLogin />} >
+            <Route element={<PrivateRouteUser />} >
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
           </Route>
-        </Route>
 
-        <Route element={<PrivateRouteAdmin />} >
-          <Route path="/incometransaction" element={<IncomeTransaction />} />
-          <Route path="/addproduct" element={<AddProduct />} />
-          <Route path="/listproduct" element={<ListProduct />} />
-        </Route>
-
+          <Route element={<PrivateRouteAdmin />} >
+            <Route path="/incometransaction" element={<IncomeTransaction />} />
+            <Route path="/addproduct" element={<AddProduct />} />
+            <Route path="/listproduct" element={<ListProduct />} />
+          </Route>
 
 
 
-      </Routes>
+
+        </Routes>
       }
     </>
 

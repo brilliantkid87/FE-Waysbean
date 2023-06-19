@@ -3,16 +3,17 @@ import Jumbotron from '../assets/Jumbotron.png'
 
 function JumbotronComponent() {
     return (
-        
+
         <>
-            <Container style={{marginTop: "100px", textAlign: "center"}} >
-                <Image src={Jumbotron} 
+            <Container style={{ marginTop: "100px", textAlign: "center", overflowX: "hidden" }} >
+                <Image src={Jumbotron}
                     style={{
-                        margin: "auto"
+                        margin: "auto",
                     }}
                 />
             </Container>
-        </>    
+
+        </>
     )
 }
 

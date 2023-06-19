@@ -1,11 +1,25 @@
 import { Card, Col, Container, Image, Row } from "react-bootstrap";
 import myProfile from '../assets/Elon-Musk-2022.webp'
 import rwanda from '../assets/VirungaEspresso.jpg'
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/userContext";
+import { useQuery } from "react-query";
+import { API } from "../../config/api";
 
 function ProfileComponent() {
     const [state] = useContext(UserContext)
+    const [trans, setTrans] = useState()
+    console.log(state);
+
+    let { data : transacations } = useQuery("transacationsCache", async () => {
+        // const response = await API.get("/transaction-user/" + state?.user?.id)
+        const response = await API.get("/transactions")
+        setTrans(response.data.data)
+        return response.data.data
+    })
+
+
+    console.log(transacations);
 
     return (
 

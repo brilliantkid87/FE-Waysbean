@@ -3,8 +3,9 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Image from "react-bootstrap/Image";
 import ProfileUser from "../assets/User.png";
 import { Link } from "react-router-dom";
-// import logout from '../assets/logout 1.png'
-// import journey from '../assets/journey 1.png'
+import AdminAdd from '../assets/Vector (4).png'
+import logout from '../assets/logout 1.png'
+// import profileuser from '../assets/user 2.png'
 
 function ProfileDropdownAdmin(props) {
   return (
@@ -15,7 +16,7 @@ function ProfileDropdownAdmin(props) {
       <Dropdown.Menu>
         <Dropdown.Item>
           <div className="d-flex align-items-center">
-            {/* <Image src={journey} className="mr-2" width={25} height={25} /> */}
+            <Image src={AdminAdd} className="mr-2" width={25} height={25} />
             <Link to="/addproduct" style={{ textDecoration: 'none', color: 'black', marginLeft: '10px' }}>
               Add Product
             </Link>
@@ -23,7 +24,7 @@ function ProfileDropdownAdmin(props) {
         </Dropdown.Item>
         <Dropdown.Item>
           <div className="d-flex align-items-center">
-            {/* <Image src={journey} className="mr-2" width={25} height={25} /> */}
+            <Image src={AdminAdd} className="mr-2" width={25} height={25} />
             <Link to="/listproduct" style={{ textDecoration: 'none', color: 'black', marginLeft: '10px' }}>
               List Product
             </Link>
@@ -31,7 +32,7 @@ function ProfileDropdownAdmin(props) {
         </Dropdown.Item>
         <Dropdown.Item onClick={props.handleLogout}>
           <div className="d-flex align-items-center">
-            {/* <Image src={logout} className="mr-2" width={25} height={25} style={{ marginRight: '10px'}} /> */}
+            <Image src={logout} className="mr-2" width={25} height={25} style={{ marginRight: '10px'}} />
             Logout
           </div>
         </Dropdown.Item>

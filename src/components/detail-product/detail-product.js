@@ -91,6 +91,9 @@ import { API } from "../../config/api";
 function DetailProduct() {
     let navigate = useNavigate();
     const { id } = useParams();
+    const [state, _] = useContext(UserContext)
+
+    console.log(state);
 
     const [products, setProducts] = useState([]);
     const queryClient = useQueryClient();
@@ -114,8 +117,9 @@ function DetailProduct() {
             };
 
             const data = {
+                user_id: state?.user?.id,
                 product_id: product.id,
-                order_quantity: 1,
+                order_quantity: +1,
             };
 
             const body = JSON.stringify(data);
@@ -172,8 +176,9 @@ function DetailProduct() {
                                         }}
                                         size="lg"
                                         onClick={(e) => handleBuy.mutate(e)}
+                                        disabled={products.length > 0}
                                     >
-                                        Add Cart
+                                        {products.length > 0 ? "Produk sudah ada di keranjang" : "Add Cart"}
                                     </Button>
                                 </div>
                             </Card.Body>

@@ -196,7 +196,6 @@ function NavbarComponent() {
                 <Link to="/payment">
                     <i className="fa-solid fa-cart-shopping"></i>
                 </Link>
-                <span style={{ fontWeight: "bold" }}>{cartItems}</span>
               </div>
             )}
             {state.isLogin && state.role === "customer" ? (

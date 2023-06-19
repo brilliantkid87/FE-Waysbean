@@ -4,8 +4,8 @@ import Image from "react-bootstrap/Image";
 import ProfileUser from "../assets/User.png";
 import { Link, useParams } from "react-router-dom";
 // import cardData2 from "../dummy/FakeCardsTour";
-// import profile from './assets/user 2.png'
-// import logout from './assets/logout 1.png'
+import profile from '../assets/user 2.png'
+import logout from '../assets/logout 1.png'
 
 
 
@@ -25,7 +25,7 @@ function ProfileDropdown({ handleLogout }) {
       <Dropdown.Menu>
         <Dropdown.Item>
           <div className="d-flex align-items-center">
-            {/* <Image src={profile} className="mr-2" width={16} height={16} /> */}
+            <Image src={profile} className="mr-2" width={16} height={16} />
             <Link style={{ textDecoration: "none", color: "black", marginLeft: '15px'}} to={"/profile"}>
               Profile
             </Link>
@@ -33,7 +33,7 @@ function ProfileDropdown({ handleLogout }) {
         </Dropdown.Item>
         <Dropdown.Item onClick={handleLogoutClick}>
           <div className="d-flex align-items-center">
-            {/* <Image src={logout} className="mr-2" width={16} height={16} style={{ marginRight: '15px'}}/> */}
+            <Image src={logout} className="mr-2" width={16} height={16} style={{ marginRight: '15px'}}/>
             Logout
           </div>
         </Dropdown.Item>
