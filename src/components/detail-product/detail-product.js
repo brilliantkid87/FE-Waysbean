@@ -92,6 +92,7 @@ function DetailProduct() {
     let navigate = useNavigate();
     const { id } = useParams();
     const [state, _] = useContext(UserContext)
+    const [cart, setCart] = useState([]);
 
     console.log(state);
 
@@ -104,6 +105,24 @@ function DetailProduct() {
         return response.data.data;
     });
     console.log("get product success", products);
+
+    let { data: carts } = useQuery("cartCache", async () => {
+        const response = await API.get("/cart-user/" + state?.user?.id);
+        setCart(response.data.data);
+        return response.data.data;
+    });
+
+    let subtotal = 0;
+    let totalQuantity = 0;
+
+    console.log(carts?.length);
+
+    carts?.forEach((item, index) => {
+        const itemSubtotal = item.products.price * item.order_quantity;
+        subtotal += itemSubtotal;
+        totalQuantity += item.order_quantity;
+    });
+    const subtotalFormatted = `Subtotal: Rp. ${subtotal.toLocaleString()}`;
 
     const handleBuy = useMutation(async (e) => {
         try {
@@ -120,6 +139,8 @@ function DetailProduct() {
                 user_id: state?.user?.id,
                 product_id: product.id,
                 order_quantity: +1,
+                sub_total: subtotal,
+                quantity: totalQuantity,
             };
 
             const body = JSON.stringify(data);

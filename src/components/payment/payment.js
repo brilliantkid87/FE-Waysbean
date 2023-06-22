@@ -19,6 +19,8 @@ function PaymentComponent() {
         return response.data.data;
     });
 
+    console.log(carts);
+
    // State untuk menyimpan data keranjang belanja
 
     // Fungsi untuk menangani penambahan jumlah pesanan
@@ -71,6 +73,7 @@ function PaymentComponent() {
         address: '',
         status: '',
         pricetotal: '',
+        total_qty: '',
     });
 
     const handlePay = useMutation(async (e) => {
@@ -92,35 +95,35 @@ function PaymentComponent() {
             formData.set('postcode', form.postcode);
             formData.set('address', form.address);
             formData.set('status', form.status);
-            formData.set("total_qty", 1000)
-
-            const response = await API.post('/transaction', carts, config);
+            formData.set('sub_total', subtotal);
+            formData.set("total_qty", totalQuantity);
+            const response = await API.post('/transaction', formData, config);
             console.log('Yoman : add transaction success : ', response);
 
-            const token = response.data.data.token;
-            window.snap.pay(token, {
-                onSuccess: function (result) {
-                    /* You may add your own implementation here */
-                    console.log(result);
-                    navigate("/profile");
-                },
-                onPending: function (result) {
-                    /* You may add your own implementation here */
-                    console.log(result);
-                    navigate("/profile");
-                },
-                onError: function (result) {
-                    /* You may add your own implementation here */
-                    console.log(result);
-                    navigate("/profile");
-                },
-                onClose: function () {
-                    /* You may add your own implementation here */
-                    alert("you closed the popup without finishing the payment");
-                },
-            });
+            // const token = response.data.data.token;
+            // window.snap.pay(token, {
+            //     onSuccess: function (result) {
+            //         /* You may add your own implementation here */
+            //         console.log(result);
+            //         navigate("/profile");
+            //     },
+            //     onPending: function (result) {
+            //         /* You may add your own implementation here */
+            //         console.log(result);
+            //         navigate("/profile");
+            //     },
+            //     onError: function (result) {
+            //         /* You may add your own implementation here */
+            //         console.log(result);
+            //         navigate("/profile");
+            //     },
+            //     onClose: function () {
+            //         /* You may add your own implementation here */
+            //         alert("you closed the popup without finishing the payment");
+            //     },
+            // });
 
-            // navigate('/profile');
+            navigate('/profile');
         } catch (error) {
             console.log('Yoman : add product failed : ', error);
         }
@@ -149,18 +152,18 @@ function PaymentComponent() {
         console.log(cart[i]?.sub_total, cart[i + 1]?.sub_total);
     }
 
+    let subtotal = 0;
+    let totalQuantity = 0;
+
+    console.log(carts?.length);
+
+    carts?.forEach((item, index) => {
+        const itemSubtotal = item.products.price * item.order_quantity;
+        subtotal += itemSubtotal;
+        totalQuantity += item.order_quantity;
+    });
+    const subtotalFormatted = `Subtotal: Rp. ${subtotal.toLocaleString()}`;
     const renderItems = () => {
-        let subtotal = 0;
-        let totalQuantity = 0;
-
-        console.log(carts?.length);
-
-        carts?.forEach((item, index) => {
-            const itemSubtotal = item.products.price * item.order_quantity;
-            subtotal += itemSubtotal;
-            totalQuantity += item.order_quantity;
-        });
-        const subtotalFormatted = `Subtotal: Rp. ${subtotal.toLocaleString()}`;
 
         return carts?.map((item, index) => {
 
