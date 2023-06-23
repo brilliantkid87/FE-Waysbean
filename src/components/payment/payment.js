@@ -100,30 +100,30 @@ function PaymentComponent() {
             const response = await API.post('/transaction', formData, config);
             console.log('Yoman : add transaction success : ', response);
 
-            // const token = response.data.data.token;
-            // window.snap.pay(token, {
-            //     onSuccess: function (result) {
-            //         /* You may add your own implementation here */
-            //         console.log(result);
-            //         navigate("/profile");
-            //     },
-            //     onPending: function (result) {
-            //         /* You may add your own implementation here */
-            //         console.log(result);
-            //         navigate("/profile");
-            //     },
-            //     onError: function (result) {
-            //         /* You may add your own implementation here */
-            //         console.log(result);
-            //         navigate("/profile");
-            //     },
-            //     onClose: function () {
-            //         /* You may add your own implementation here */
-            //         alert("you closed the popup without finishing the payment");
-            //     },
-            // });
+            const token = response.data.data.token;
+            window.snap.pay(token, {
+                onSuccess: function (result) {
+                    /* You may add your own implementation here */
+                    console.log(result);
+                    navigate("/profile");
+                },
+                onPending: function (result) {
+                    /* You may add your own implementation here */
+                    console.log(result);
+                    navigate("/profile");
+                },
+                onError: function (result) {
+                    /* You may add your own implementation here */
+                    console.log(result);
+                    navigate("/profile");
+                },
+                onClose: function () {
+                    /* You may add your own implementation here */
+                    alert("you closed the popup without finishing the payment");
+                },
+            });
 
-            navigate('/profile');
+            // navigate('/profile');
         } catch (error) {
             console.log('Yoman : add product failed : ', error);
         }
