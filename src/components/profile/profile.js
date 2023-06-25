@@ -112,9 +112,9 @@ function ProfileComponent() {
                                                 <Card.Body key={index}>
                                                     <Card.Title style={{ fontFamily: "avenir", fontStyle: "normal", fontWeight: "bold" }}>{item?.products?.name}</Card.Title>
                                                     <Card.Text style={{ fontFamily: "avenir", fontStyle: "normal" }}>Saturday, 5 March 2020</Card.Text>
-                                                    <Card.Text style={{ fontFamily: "avenir", fontStyle: "normal" }}>{item?.products?.price}</Card.Text>
+                                                    <Card.Text style={{ fontFamily: "avenir", fontStyle: "normal" }}>{item?.products?.price.toLocaleString()}</Card.Text>
                                                     <Card.Text style={{ fontFamily: "avenir", fontStyle: "normal" }}>{totalQuantity}</Card.Text>
-                                                    <Card.Text style={{ fontFamily: "avenir", fontStyle: "normal" }}>{subtotalFormatted.toLocaleString()}</Card.Text>
+                                                    <Card.Text style={{ fontFamily: "avenir", fontStyle: "normal" }}>{subtotalFormatted}</Card.Text>
                                                 </Card.Body>
                                             </div>
                                         </div>
