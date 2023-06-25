@@ -1,4 +1,4 @@
-import { Container, Table } from "react-bootstrap"
+import { Container, Image, Table } from "react-bootstrap"
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom"
 import { API } from "../../config/api";
@@ -33,7 +33,9 @@ function ListProductComponent() {
                             <tbody key={index}>
                                 <tr style={{ fontFamily: "avenir", fontStyle: "normal" }}>
                                     <td>{index + 1}</td>
-                                    <td>{card.image}</td>
+                                    <td>
+                                        <Image src={card.image} alt={card.name} style={{ width: "100%", maxWidth: "200px"}} />
+                                    </td>
                                     <td>{card.name}</td>
                                     <td>{card.stock}</td>
                                     <td>{card.price}</td>
