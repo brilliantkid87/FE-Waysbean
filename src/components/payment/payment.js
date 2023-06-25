@@ -198,7 +198,7 @@ function PaymentComponent() {
                         <Col xs={5} className="mt-3">
                             <Card>
                                 <Card.Body>
-                                    <Card.Text> {subtotalFormatted} </Card.Text>
+                                    <Card.Text> {subtotalFormatted.toLocaleString()} </Card.Text>
                                     <Card.Text>Total Quantity: {totalQuantity}</Card.Text>
                                     <Button style={{ background: '#613D2B', width: '100%' }} onClick={(e) => handlePay.mutate(e)}>Pay</Button>
                                 </Card.Body>
